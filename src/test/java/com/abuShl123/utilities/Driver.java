@@ -1,9 +1,11 @@
 package com.abuShl123.utilities;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
 public class Driver extends DriverBase{
     private static WebDriver driver;
@@ -12,8 +14,7 @@ public class Driver extends DriverBase{
 
     public static WebDriver getDriver() {
         if (driver == null) {
-            String browserType = ConfigurationReader.getProperty("browser");
-            switch (browserType){
+            switch (BROWSER){
                 case "chrome":
                     WebDriverManager.chromedriver().setup();
                     driver = new ChromeDriver(OPTIONS)  ;
@@ -22,12 +23,20 @@ public class Driver extends DriverBase{
                     WebDriverManager.edgedriver().setup();
                     driver = new EdgeDriver();
                     break;
+                case "firefox":
+                    WebDriverManager.firefoxdriver().setup();
+                    driver = new FirefoxDriver();
+                    break;
                 default:
-                    throw new IllegalArgumentException("unknown browser type: " + browserType);
+                    throw new IllegalArgumentException("unknown browser type: " + BROWSER);
             }
             driver.manage().window().maximize();
         }
         return driver;
+    }
+
+    public static JavascriptExecutor getJs(){
+        return (JavascriptExecutor) Driver.getDriver();
     }
 
     public void closeDriver(){

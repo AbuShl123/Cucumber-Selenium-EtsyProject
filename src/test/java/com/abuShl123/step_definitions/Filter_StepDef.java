@@ -10,7 +10,7 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import org.junit.Assert;
 import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
 
 public class Filter_StepDef {
     private static final MainPage mainPage = new MainPage();
@@ -33,8 +33,7 @@ public class Filter_StepDef {
 
     @When("^user selects FREE shipping option$")
     public void user_selects_FREE_shipping_option() {
-        JavascriptExecutor js = (JavascriptExecutor) Driver.getDriver();
-        js.executeScript("arguments[0].click();", clothingAndShoesPage.free_shipping_filter);
+        Driver.getJs().executeScript("arguments[0].click();", clothingAndShoesPage.free_shipping_filter);
     }
 
     @And("^user clicks on apply button$")
@@ -51,4 +50,41 @@ public class Filter_StepDef {
         int productsWithFreeShipping_amount = Driver.getDriver().findElements(By.xpath(product_locator+label_locator)).size();
         Assert.assertTrue(allProductsNumber-productsWithFreeShipping_amount <= 15);
     }
+
+
+    @When("^user selects Under USD 25 option$")
+    public void userSelectsUnderUSDOption() {
+        Driver.getJs().executeScript("arguments[0].click();", clothingAndShoesPage.under_usd_25_filter);
+    }
+
+    @Then("^all products on the page should appear with price of no more less than \\$25$")
+    public void allProductsOnThePageShouldAppearWithPriceOfNoMoreLessThan$() {
+        for (WebElement e : clothingAndShoesPage.eachItemsPrice){
+            Assert.assertTrue(Double.parseDouble(e.getText()) <= 25);
+        }
+    }
+
+    @When("^user selects custom under price option$")
+    public void userSelectsCustomUnderPriceOption() {
+        Driver.getJs().executeScript("arguments[0].click();", clothingAndShoesPage.custom_price_filter);
+    }
+
+    @When("^user sets low parameter to \\$\"([^\"]*)\"$")
+    public void userSetsLowParameterTo$(int low) {
+        Driver.getJs().executeScript("arguments[0].setAttribute('value', '" + low + "')", clothingAndShoesPage.from_low_price);
+    }
+
+    @When("^user sets high parameter to \\$\"([^\"]*)\"$")
+    public void userSetsHighParameterTo$(int high) {
+        Driver.getJs().executeScript("arguments[0].setAttribute('value', '" + high + "')", clothingAndShoesPage.to_max_price);
+    }
+
+    @Then("^All Items on the page should appear with price in range of \\$\"([^\"]*)\" to \\$\"([^\"]*)\"$")
+    public void allItemsOnThePageShouldAppearWithPriceInRangeOf$To$(int low, int high) {
+        for (WebElement e : clothingAndShoesPage.eachItemsPrice) {
+            double price = Double.parseDouble(e.getText());
+            Assert.assertTrue(price >= low && price <= high);
+        }
+    }
+
 }

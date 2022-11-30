@@ -35,4 +35,7 @@ public class ClothingAndShoesPage {
 
     @FindBy (xpath = "//ul[starts-with(@class, 'wt-grid')]/li")
     public List<WebElement> allProducts;
+
+    @FindBy (css = "li[class$='wt-show-lg'] p[class$='lc-price'] span[class='currency-value']")
+    public List<WebElement> eachItemsPrice;
 }
